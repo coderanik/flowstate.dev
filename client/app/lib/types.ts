@@ -16,7 +16,7 @@ export type AIModel =
 
 export type Tool = 
   | { type: "ai"; model: AIModel }
-  | { type: "util"; name: "json-formatter" | "regex-tester" | "markdown-preview" }
+  | { type: "util"; name: "json-formatter" | "regex-tester" | "markdown-preview" | "hash-generator" | "yaml-json" | "xml-formatter" | "qr-generator" | "uuid-generator" | "color-converter" }
   | { type: "flow"; name: "focus-timer" | "ambient-sound" | "build-notes" }
   | { type: "editor" }
   | { type: "settings" };

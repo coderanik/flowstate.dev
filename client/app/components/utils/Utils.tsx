@@ -5,14 +5,26 @@ import type { Tool } from "@/app/lib/types";
 import { JsonFormatter } from "./JsonFormatter";
 import { RegexTester } from "./RegexTester";
 import { MarkdownPreview } from "./MarkdownPreview";
+import { HashGenerator } from "./HashGenerator";
+import { YamlJson } from "./YamlJson";
+import { XmlFormatter } from "./XmlFormatter";
+import { QrGenerator } from "./QrGenerator";
+import { UuidGenerator } from "./UuidGenerator";
+import { ColorConverter } from "./ColorConverter";
 
 const TABS: { id: Tool["type"] extends "util" ? Tool["name"] : never; label: string }[] = [
   { id: "json-formatter", label: "JSON Formatter" },
   { id: "regex-tester", label: "Regex Tester" },
   { id: "markdown-preview", label: "Markdown Preview" },
+  { id: "hash-generator", label: "Hash Generator" },
+  { id: "yaml-json", label: "YAML ↔ JSON" },
+  { id: "xml-formatter", label: "XML Formatter" },
+  { id: "qr-generator", label: "QR Code" },
+  { id: "uuid-generator", label: "UUID Generator" },
+  { id: "color-converter", label: "Color Picker" },
 ];
 
-export function Utils({ initialTool }: { initialTool: "json-formatter" | "regex-tester" | "markdown-preview" }) {
+export function Utils({ initialTool }: { initialTool: Tool["type"] extends "util" ? Tool["name"] : never }) {
   const [active, setActive] = useState(initialTool);
 
   return (
@@ -37,6 +49,12 @@ export function Utils({ initialTool }: { initialTool: "json-formatter" | "regex-
         {active === "json-formatter" && <JsonFormatter />}
         {active === "regex-tester" && <RegexTester />}
         {active === "markdown-preview" && <MarkdownPreview />}
+        {active === "hash-generator" && <HashGenerator />}
+        {active === "yaml-json" && <YamlJson />}
+        {active === "xml-formatter" && <XmlFormatter />}
+        {active === "qr-generator" && <QrGenerator />}
+        {active === "uuid-generator" && <UuidGenerator />}
+        {active === "color-converter" && <ColorConverter />}
       </div>
     </div>
   );

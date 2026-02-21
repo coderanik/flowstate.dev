@@ -34,6 +34,12 @@ const SECTIONS: SidebarSection[] = [
       { id: "json-formatter", label: "JSON Formatter", tool: { type: "util", name: "json-formatter" } },
       { id: "regex-tester", label: "Regex Tester", tool: { type: "util", name: "regex-tester" } },
       { id: "markdown-preview", label: "Markdown Preview", tool: { type: "util", name: "markdown-preview" } },
+      { id: "hash-generator", label: "Hash Generator", tool: { type: "util", name: "hash-generator" } },
+      { id: "yaml-json", label: "YAML ↔ JSON", tool: { type: "util", name: "yaml-json" } },
+      { id: "xml-formatter", label: "XML Formatter", tool: { type: "util", name: "xml-formatter" } },
+      { id: "qr-generator", label: "QR Code Generator", tool: { type: "util", name: "qr-generator" } },
+      { id: "uuid-generator", label: "UUID Generator", tool: { type: "util", name: "uuid-generator" } },
+      { id: "color-converter", label: "Color Picker", tool: { type: "util", name: "color-converter" } },
     ],
   },
   {

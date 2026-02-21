@@ -168,6 +168,42 @@ export default function Workspace() {
         category: "Utils",
         action: () => dispatch(setActiveTool({ type: "util", name: "markdown-preview" })),
       },
+      {
+        id: "util-hash",
+        label: "Hash Generator",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "hash-generator" })),
+      },
+      {
+        id: "util-yaml-json",
+        label: "YAML ↔ JSON",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "yaml-json" })),
+      },
+      {
+        id: "util-xml",
+        label: "XML Formatter",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "xml-formatter" })),
+      },
+      {
+        id: "util-qr",
+        label: "QR Code Generator",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "qr-generator" })),
+      },
+      {
+        id: "util-uuid",
+        label: "UUID Generator",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "uuid-generator" })),
+      },
+      {
+        id: "util-color",
+        label: "Color Picker",
+        category: "Utils",
+        action: () => dispatch(setActiveTool({ type: "util", name: "color-converter" })),
+      },
       // Flow
       {
         id: "flow-timer",
