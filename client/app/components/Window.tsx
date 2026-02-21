@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, ReactNode } from "react";
+import { useState, useRef, useEffect, ReactNode, useCallback } from "react";
 
 export interface WindowProps {
   id: string;
@@ -19,6 +19,20 @@ export interface WindowProps {
   onFocus: () => void;
 }
 
+/** Breakpoint below which windows always render full-screen */
+const MOBILE_BREAKPOINT = 768;
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export function Window({
   id,
   title,
@@ -35,6 +49,7 @@ export function Window({
   onMaximize,
   onFocus,
 }: WindowProps) {
+  const isMobile = useIsMobile();
   const [position, setPosition] = useState(initialPosition);
   const [size, setSize] = useState(initialSize);
   const [isDragging, setIsDragging] = useState(false);
@@ -46,14 +61,14 @@ export function Window({
   const preMaximizeState = useRef({ position, size });
 
   useEffect(() => {
-    if (!isMaximized) {
+    if (!isMaximized && !isMobile) {
       preMaximizeState.current = { position, size };
     }
-  }, [position, size, isMaximized]);
+  }, [position, size, isMaximized, isMobile]);
 
-  // Handle dragging
+  // Handle dragging (desktop only)
   useEffect(() => {
-    if (!isDragging) return;
+    if (!isDragging || isMobile) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({
@@ -73,11 +88,11 @@ export function Window({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, dragOffset]);
+  }, [isDragging, dragOffset, isMobile]);
 
-  // Handle resizing
+  // Handle resizing (desktop only)
   useEffect(() => {
-    if (!isResizing) return;
+    if (!isResizing || isMobile) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       setSize({
@@ -97,10 +112,10 @@ export function Window({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing, position]);
+  }, [isResizing, position, isMobile]);
 
   const handleTitleBarMouseDown = (e: React.MouseEvent) => {
-    if (isMaximized) return;
+    if (isMaximized || isMobile) return;
     if ((e.target as HTMLElement).closest(".window-controls")) return;
     
     onFocus();
@@ -112,13 +127,14 @@ export function Window({
   };
 
   const handleResizeMouseDown = (e: React.MouseEvent) => {
-    if (isMaximized) return;
+    if (isMaximized || isMobile) return;
     e.preventDefault();
     onFocus();
     setIsResizing(true);
   };
 
   const handleMaximize = () => {
+    if (isMobile) return; // Always full-screen on mobile
     if (isMaximized) {
       // Restore
       setPosition(preMaximizeState.current.position);
@@ -129,13 +145,16 @@ export function Window({
 
   if (isMinimized) return null;
 
-  const windowStyle = isMaximized
+  // On mobile/small screens, always render full-screen
+  const isFullScreen = isMobile || isMaximized;
+
+  const windowStyle = isFullScreen
     ? {
-        top: 28, // Below menu bar
+        top: isMobile ? 0 : 28, // On mobile, go edge-to-edge (menu bar is hidden)
         left: 0,
         width: "100%",
-        height: "calc(100vh - 28px - 90px)", // Subtract menu bar and dock
-        zIndex,
+        height: isMobile ? "100vh" : "calc(100vh - 28px - 90px)", // Subtract menu bar and dock on desktop
+        zIndex: isMobile ? 9998 : zIndex, // On mobile, ensure windows are above everything
       }
     : {
         top: position.y,
@@ -150,9 +169,10 @@ export function Window({
       ref={windowRef}
       className={`
         fixed flex flex-col
-        bg-bg-secondary rounded-xl overflow-hidden
+        bg-bg-secondary overflow-hidden
         shadow-2xl shadow-black/50
         transition-shadow duration-200
+        ${isFullScreen && isMobile ? "rounded-none" : "rounded-xl"}
         ${isActive ? "shadow-black/70" : "opacity-95"}
         ${isDragging || isResizing ? "select-none" : ""}
       `}
@@ -165,6 +185,7 @@ export function Window({
           flex items-center gap-2 px-3 h-10 shrink-0
           ${isActive ? "bg-bg-tertiary" : "bg-bg-secondary"}
           cursor-default
+          ${isMobile ? "safe-area-top" : ""}
         `}
         onMouseDown={handleTitleBarMouseDown}
         onDoubleClick={handleMaximize}
@@ -185,9 +206,10 @@ export function Window({
               <path d="M6 6l12 12M6 18L18 6" />
             </svg>
           </button>
+          {/* Hide minimize and maximize on mobile – they're unnecessary */}
           <button
             onClick={onMinimize}
-            className="group w-3 h-3 rounded-full bg-[#febc2e] hover:brightness-110 flex items-center justify-center"
+            className={`group w-3 h-3 rounded-full bg-[#febc2e] hover:brightness-110 flex items-center justify-center ${isMobile ? "hidden" : ""}`}
           >
             <svg
               className="w-2 h-2 text-[#9a6a02] opacity-0 group-hover:opacity-100"
@@ -201,7 +223,7 @@ export function Window({
           </button>
           <button
             onClick={handleMaximize}
-            className="group w-3 h-3 rounded-full bg-[#28c840] hover:brightness-110 flex items-center justify-center"
+            className={`group w-3 h-3 rounded-full bg-[#28c840] hover:brightness-110 flex items-center justify-center ${isMobile ? "hidden" : ""}`}
           >
             <svg
               className="w-2 h-2 text-[#006500] opacity-0 group-hover:opacity-100"
@@ -226,22 +248,22 @@ export function Window({
         </div>
 
         {/* Title */}
-        <div className="flex-1 flex items-center justify-center gap-2">
+        <div className="flex-1 flex items-center justify-center gap-2 min-w-0">
           {icon && (
             <span className="text-text-muted text-sm font-mono">{icon}</span>
           )}
-          <span className="text-text-secondary text-sm">{title}</span>
+          <span className="text-text-secondary text-sm truncate">{title}</span>
         </div>
 
         {/* Spacer to balance */}
-        <div className="w-14" />
+        <div className={isMobile ? "w-4" : "w-14"} />
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">{children}</div>
 
-      {/* Resize handle */}
-      {!isMaximized && (
+      {/* Resize handle (desktop only, non-maximized) */}
+      {!isFullScreen && !isMobile && (
         <div
           className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
           onMouseDown={handleResizeMouseDown}

@@ -153,7 +153,7 @@ export function CodeEditor() {
   return (
     <div className="flex flex-col h-full bg-bg-secondary">
       {/* Toolbar */}
-      <div className="flex items-center gap-3 px-3 py-2 border-b border-border/50 bg-bg-tertiary shrink-0">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 px-3 py-2 border-b border-border/50 bg-bg-tertiary shrink-0">
         <button
           type="button"
           onClick={runCode}
@@ -183,14 +183,14 @@ export function CodeEditor() {
             ))}
           </select>
         </label>
-        <span className="text-text-muted text-xs">
+        <span className="text-text-muted text-xs hidden sm:inline">
           JavaScript runs in-browser; Python, Java, C, C++ run via server.
         </span>
       </div>
 
-      {/* Code + Output split */}
-      <div className="flex-1 flex min-h-0">
-        <div className="flex-1 flex flex-col min-w-0 border-r border-border/50">
+      {/* Code + Output split: horizontal on desktop, vertical on mobile */}
+      <div className="flex-1 flex flex-col sm:flex-row min-h-0">
+        <div className="flex-1 flex flex-col min-w-0 border-b sm:border-b-0 sm:border-r border-border/50">
           <div className="px-2 py-1 text-text-muted text-xs font-mono border-b border-border/50 bg-bg-tertiary/50">
             Editor
           </div>
@@ -198,16 +198,16 @@ export function CodeEditor() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             spellCheck={false}
-            className="flex-1 w-full resize-none bg-bg-primary text-text-primary font-mono text-sm p-4 outline-none caret-text-primary"
+            className="flex-1 w-full resize-none bg-bg-primary text-text-primary font-mono text-xs sm:text-sm p-3 sm:p-4 outline-none caret-text-primary"
             style={{ minHeight: 120 }}
             placeholder={`Write or paste ${LANGUAGES.find((l) => l.id === language)?.label ?? language}...`}
           />
         </div>
-        <div className="w-72 flex flex-col shrink-0 bg-bg-primary">
+        <div className="h-40 sm:h-auto sm:w-72 flex flex-col shrink-0 bg-bg-primary">
           <div className="px-2 py-1 text-text-muted text-xs font-mono border-b border-border/50 bg-bg-tertiary/50">
             Output
           </div>
-          <div className="flex-1 overflow-auto p-3 font-mono text-sm">
+          <div className="flex-1 overflow-auto p-3 font-mono text-xs sm:text-sm">
             {error && (
               <div className="text-error text-sm mb-2">
                 <span className="font-semibold">{errorType ? `${errorType}: ` : ""}</span>

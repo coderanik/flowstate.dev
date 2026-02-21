@@ -47,16 +47,18 @@ export function MenuBar({
       : AI_MODELS.find((m) => m.id === activeModel)?.name || activeModel;
 
   return (
-    <header className="h-7 px-4 flex items-center justify-between text-xs bg-bg-secondary/80 backdrop-blur-md border-b border-border/50">
+    <header className="h-7 px-3 sm:px-4 flex items-center justify-between text-xs bg-bg-secondary/80 backdrop-blur-md border-b border-border/50 shrink-0">
       {/* Left: App name */}
       <div className="flex items-center gap-3">
         <span className="text-text-primary font-medium">flowstate.dev</span>
       </div>
 
-      {/* Right: Status items */}
-      <div className="flex items-center gap-4 text-text-muted">
+      {/* Right: Status items — hide less-important items on small screens */}
+      <div className="flex items-center gap-2 sm:gap-4 text-text-muted">
         <span className="text-accent">{MODE_LABELS[mode]}</span>
-        <span className="text-text-secondary">{modelName}</span>
+        {/* Model name: hide on very small mobile */}
+        <span className="text-text-secondary hidden xs:inline sm:inline">{modelName}</span>
+        {/* Duration: always show */}
         <span>{formatDuration(elapsed)}</span>
         <button
           onClick={onCommandPalette}

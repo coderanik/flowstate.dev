@@ -85,9 +85,9 @@ export function Settings() {
     : CATEGORIES;
 
   return (
-    <div className="flex h-full bg-bg-primary text-text-primary ">
-      {/* Left sidebar - macOS style: wider so scrollbar doesn't overlap content */}
-      <aside className="w-[170px] shrink-0 flex flex-col border-r border-border bg-bg-secondary overflow-hidden">
+    <div className="flex flex-col sm:flex-row h-full bg-bg-primary text-text-primary">
+      {/* Sidebar: vertical on desktop, horizontal tabs on mobile */}
+      <aside className="hidden sm:flex w-[170px] shrink-0 flex-col border-r border-border bg-bg-secondary overflow-hidden">
         <div className="shrink-0 pt-3 pr-3 pl-3 pb-2">
           <div className="flex items-center gap-2 rounded-lg bg-bg-tertiary border border-border px-3 py-2 min-h-[36px]">
             <SearchIcon className="w-4 h-4 text-text-muted shrink-0" />
@@ -120,10 +120,29 @@ export function Settings() {
         </nav>
       </aside>
 
+      {/* Mobile tabs */}
+      <div className="flex sm:hidden border-b border-border bg-bg-secondary overflow-x-auto shrink-0">
+        {filteredCategories.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => setCategory(cat.id)}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors border-b-2 ${
+              category === cat.id
+                ? "border-blue-500 text-white bg-blue-600/20"
+                : "border-transparent text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            <span className="text-text-muted">{cat.icon}</span>
+            <span>{cat.label}</span>
+          </button>
+        ))}
+      </div>
+
       {/* Main content pane */}
       <main className="flex-1 overflow-y-auto">
         {category === "general" && (
-          <div className="max-w-2xl mx-auto py-8 px-10">
+          <div className="max-w-2xl mx-auto py-6 sm:py-8 px-4 sm:px-10">
             <div className="flex flex-col items-center text-center mb-8">
               <div className="w-10 h-10 rounded-2xl bg-bg-tertiary flex items-center justify-center mb-4 text-text-muted">
                 <GearIcon className="w-6 h-6" />
@@ -135,7 +154,7 @@ export function Settings() {
             </div>
 
             <div className="space-y-2 ">
-              <div className="flex items-center justify-between gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="text-text-muted shrink-0">
                     <ClockIcon />
@@ -145,7 +164,7 @@ export function Settings() {
                     <p className="text-xs text-text-muted">Digital or analog display on the desktop</p>
                   </div>
                 </div>
-                <div className="shrink-0">
+                <div className="shrink-0 self-end sm:self-center">
                 <ToggleButtonGroup
                   value={clockStyle}
                   options={[
@@ -157,7 +176,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="text-text-muted shrink-0">
                     <ClockIcon />
@@ -167,7 +186,7 @@ export function Settings() {
                     <p className="text-xs text-text-muted">12-hour or 24-hour</p>
                   </div>
                 </div>
-                <div className="shrink-0">
+                <div className="shrink-0 self-end sm:self-center">
                 <ToggleButtonGroup
                   value={timeFormat}
                   options={[
@@ -183,7 +202,7 @@ export function Settings() {
         )}
 
         {category === "appearance" && (
-          <div className="max-w-2xl mx-auto py-8 px-10">
+          <div className="max-w-2xl mx-auto py-6 sm:py-8 px-4 sm:px-10">
             <div className="flex flex-col items-center text-center mb-8">
               <div className="w-10 h-10 rounded-2xl bg-bg-tertiary flex items-center justify-center mb-4 text-text-muted">
                 <PaletteIcon className="w-6 h-6" />
@@ -195,7 +214,7 @@ export function Settings() {
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-center justify-between gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-lg bg-bg-secondary border border-border/50 px-4 py-3 hover:bg-bg-tertiary/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="text-text-muted shrink-0">
                     <PaletteIcon />
@@ -205,7 +224,7 @@ export function Settings() {
                     <p className="text-xs text-text-muted break-words">Deep Focus, Late Night, or Hack</p>
                   </div>
                 </div>
-                <div className="shrink-0">
+                <div className="shrink-0 self-end sm:self-center">
                 <ToggleButtonGroup<Mode>
                   value={mode}
                   options={[

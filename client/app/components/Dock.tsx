@@ -38,6 +38,7 @@ type DockItemProps = {
   distance: number;
   baseItemSize: number;
   magnification: number;
+  isMobile: boolean;
 };
 
 function DockItem({
@@ -48,7 +49,8 @@ function DockItem({
   spring,
   distance,
   magnification,
-  baseItemSize
+  baseItemSize,
+  isMobile
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
@@ -61,7 +63,9 @@ function DockItem({
     return val - rect.x - baseItemSize / 2;
   });
 
-  const targetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, magnification, baseItemSize]);
+  // On mobile, disable magnification
+  const targetMagnification = isMobile ? baseItemSize : magnification;
+  const targetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, targetMagnification, baseItemSize]);
   const size = useSpring(targetSize, spring);
 
   return (
@@ -149,13 +153,26 @@ export default function Dock({
   void dockHeight; // reserved for future use
   const mouseX = useMotionValue(Infinity);
 
+  // Responsive: smaller dock on mobile
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const responsiveBaseSize = isMobile ? 38 : baseItemSize;
+  const responsivePanelHeight = isMobile ? 54 : panelHeight;
+  const responsiveGap = isMobile ? 'gap-2' : 'gap-4';
+
   return (
-    <motion.div style={{ height: panelHeight, scrollbarWidth: 'none' }} className="mx-2 flex max-w-full items-center">
+    <motion.div style={{ height: responsivePanelHeight, scrollbarWidth: 'none' }} className="mx-2 flex max-w-full items-center">
       <motion.div
         onMouseMove={({ pageX }) => mouseX.set(pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
-        className={`${className} relative flex items-end w-fit gap-4 rounded-2xl border border-neutral-600/80 bg-[#060010]/90 backdrop-blur-md pb-2 px-4 shadow-xl`}
-        style={{ height: panelHeight }}
+        className={`${className} relative flex items-end w-fit ${responsiveGap} rounded-2xl border border-neutral-600/80 bg-[#060010]/90 backdrop-blur-md pb-2 px-3 sm:px-4 shadow-xl`}
+        style={{ height: responsivePanelHeight }}
         role="toolbar"
         aria-label="Application dock"
       >
@@ -168,10 +185,12 @@ export default function Dock({
             spring={spring}
             distance={distance}
             magnification={magnification}
-            baseItemSize={baseItemSize}
+            baseItemSize={responsiveBaseSize}
+            isMobile={isMobile}
           >
             <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
+            {/* Hide labels on mobile — they're hard to use on touch */}
+            {!isMobile && <DockLabel>{item.label}</DockLabel>}
           </DockItem>
         ))}
       </motion.div>
