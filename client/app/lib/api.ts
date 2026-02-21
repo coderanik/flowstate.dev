@@ -123,6 +123,38 @@ export async function getKeyStatus(): Promise<{
 }
 
 /**
+ * Run code via server (Piston API) for Python, Java, C, C++.
+ */
+export async function runCode(
+  language: "python" | "java" | "c" | "cpp",
+  code: string
+): Promise<{
+  outputLines: string[];
+  error: string | null;
+  errorType: string | null;
+}> {
+  const response = await fetch(`${API_BASE}/api/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ language, code }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    return {
+      outputLines: [],
+      error: data.error ?? "Request failed",
+      errorType: data.errorType ?? "RequestError",
+    };
+  }
+  return {
+    outputLines: data.outputLines ?? [],
+    error: data.error ?? null,
+    errorType: data.errorType ?? null,
+  };
+}
+
+/**
  * Health check -- verify the server is running.
  */
 export async function healthCheck(): Promise<{

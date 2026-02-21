@@ -22,6 +22,8 @@ interface TerminalProps {
   isStreaming?: boolean;
   /** Ref for synchronous streaming check (guards against race before state updates) */
   streamingRef?: React.RefObject<boolean>;
+  /** Open the Code editor window (e.g. from terminal commands: code, editor) */
+  onOpenEditor?: () => void;
 }
 
 type OutputVariant = "header" | "category" | "command" | "model" | "hint";
@@ -56,6 +58,8 @@ const COMMANDS: Record<string, string> = {
   ls: "List workspace contents",
   ask: "Ask the AI a question (usage: ask <question>)",
   apikey: "Add API key for a paid model (usage: apikey <model>)",
+  code: "Open the Code editor (run LLM-generated JavaScript)",
+  editor: "Same as code — open the Code editor",
 };
 
 export function Terminal({
@@ -69,6 +73,7 @@ export function Terminal({
   onKeyConfigured,
   isStreaming = false,
   streamingRef,
+  onOpenEditor,
 }: TerminalProps) {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
@@ -313,6 +318,16 @@ export function Terminal({
         } else {
           const question = args.join(" ");
           onSendMessage(question);
+        }
+        break;
+
+      case "code":
+      case "editor":
+        if (onOpenEditor) {
+          onOpenEditor();
+          addLine("output", "Opened Code editor.");
+        } else {
+          addLine("error", "Code editor is not available.");
         }
         break;
 

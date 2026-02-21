@@ -50,11 +50,6 @@ export function MenuBar({
     <header className="h-7 px-4 flex items-center justify-between text-xs bg-bg-secondary/80 backdrop-blur-md border-b border-border/50">
       {/* Left: App name */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-          <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-          <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-        </div>
         <span className="text-text-primary font-medium">flowstate.dev</span>
       </div>
 
