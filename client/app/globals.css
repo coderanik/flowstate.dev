@@ -288,3 +288,53 @@ body::before {
     @apply bg-background text-foreground;
   }
 }
+
+/* Markdown Preview (Utils): GitHub-style HTML from rehype-raw */
+.markdown-preview div[align="center"] {
+  text-align: center;
+}
+.markdown-preview img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+.markdown-preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.markdown-preview td,
+.markdown-preview th {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.markdown-preview thead {
+  background: var(--bg-tertiary);
+}
+.markdown-preview tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+.markdown-preview a {
+  color: var(--accent);
+}
+.markdown-preview a:hover {
+  text-decoration: underline;
+}
+
+/* Settings: reserve space for scrollbar so it doesn't overlap sidebar content */
+.settings-nav {
+  scrollbar-gutter: stable;
+}
+.settings-nav::-webkit-scrollbar {
+  width: 8px;
+}
+.settings-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.settings-nav::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+.settings-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

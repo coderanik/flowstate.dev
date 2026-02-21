@@ -8,6 +8,7 @@ import {
   Window,
   CodeEditor,
   Settings,
+  Utils,
   Clock,
   Calendar,
   SpotifyCard,
@@ -257,10 +258,13 @@ export default function Workspace() {
     if (window.appType === "editor") {
       return <CodeEditor />;
     }
+    if (window.appType === "utils" && window.tool.type === "util") {
+      return <Utils initialTool={window.tool.name} />;
+    }
     if (window.appType === "settings") {
       return <Settings />;
     }
-    // Placeholder for other app types
+    // Placeholder for other app types (flow, etc.)
     return (
       <div className="flex items-center justify-center h-full text-text-muted">
         <div className="text-center">
