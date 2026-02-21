@@ -6,13 +6,15 @@ import {
   CommandPalette,
   MenuBar,
   Window,
+  CodeEditor,
   Settings,
+  Utils,
   Clock,
   Calendar,
   SpotifyCard,
 } from "@/app/components";
 import Dock from '@/app/components/Dock';
-import { VscTerminal, VscSparkle, VscBracketDot, VscDebugConsole, VscSettingsGear } from 'react-icons/vsc';
+import { VscTerminal, VscSparkle, VscCode, VscBracketDot, VscDebugConsole, VscSettingsGear } from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
   setMode,
@@ -187,6 +189,20 @@ export default function Workspace() {
       },
       // Actions
       {
+        id: "open-code-editor",
+        label: "Open Code editor",
+        category: "Action",
+        action: () =>
+          dispatch(
+            openWindow({
+              appType: "editor",
+              title: "Code",
+              icon: "</>",
+              tool: { type: "editor" },
+            })
+          ),
+      },
+      {
         id: "clear-session",
         label: "Clear session",
         category: "Action",
@@ -226,13 +242,29 @@ export default function Workspace() {
               dispatch(setPaidKeyStatus({ model, configured: true }));
             }
           }}
+          onOpenEditor={() =>
+            dispatch(
+              openWindow({
+                appType: "editor",
+                title: "Code",
+                icon: "</>",
+                tool: { type: "editor" },
+              })
+            )
+          }
         />
       );
+    }
+    if (window.appType === "editor") {
+      return <CodeEditor />;
+    }
+    if (window.appType === "utils" && window.tool.type === "util") {
+      return <Utils initialTool={window.tool.name} />;
     }
     if (window.appType === "settings") {
       return <Settings />;
     }
-    // Placeholder for other app types
+    // Placeholder for other app types (flow, etc.)
     return (
       <div className="flex items-center justify-center h-full text-text-muted">
         <div className="text-center">
@@ -309,6 +341,7 @@ export default function Workspace() {
           <SpotifyCard />
         </div>
         <Dock
+          className="mt-19"
           items={[
             {
               icon: <VscTerminal size={18} />,
@@ -333,6 +366,19 @@ export default function Workspace() {
                     title: `AI · ${state.activeModel === "none" ? "No model" : AI_MODELS.find((m) => m.id === state.activeModel)?.name ?? state.activeModel}`,
                     icon: '◆',
                     tool: { type: 'ai', model: state.activeModel },
+                  })
+                ),
+            },
+            {
+              icon: <VscCode size={18} />,
+              label: 'Code',
+              onClick: () =>
+                dispatch(
+                  openWindow({
+                    appType: 'editor',
+                    title: 'Code',
+                    icon: '</>',
+                    tool: { type: 'editor' },
                   })
                 ),
             },

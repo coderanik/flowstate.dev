@@ -7,6 +7,7 @@ import { GoogleProvider, HuggingFaceProvider } from "./providers/index.js";
 import { createChatRouter } from "./routes/chat.js";
 import { createModelsRouter } from "./routes/models.js";
 import { createKeysRouter } from "./routes/keys.js";
+import { createRunRouter } from "./routes/run.js";
 import { createSpotifyRouter } from "./routes/spotify.js";
 import { SpotifyStore } from "./lib/spotify-store.js";
 import { sessionMiddleware } from "./middleware/session.js";
@@ -130,6 +131,7 @@ app.use(sessionMiddleware);
 app.use("/api/chat", createChatRouter(aiRouter, keyStore));
 app.use("/api/models", createModelsRouter(aiRouter));
 app.use("/api/keys", createKeysRouter(keyStore));
+app.use("/api/run", createRunRouter());
 app.use("/api/spotify", createSpotifyRouter(spotifyStore));
 
 // Health check

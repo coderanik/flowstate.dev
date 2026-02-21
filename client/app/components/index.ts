@@ -7,5 +7,7 @@ export { HelpPanel } from "./HelpPanel";
 export { MenuBar } from "./MenuBar";
 export { Dock } from "./Dock";
 export { Window } from "./Window";
+export { CodeEditor } from "./CodeEditor";
 export { Settings } from "./Settings";
 export { Clock, Calendar, SpotifyCard } from "./widgets";
+export { Utils } from "./utils";

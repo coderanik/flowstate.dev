@@ -18,9 +18,10 @@ export type Tool =
   | { type: "ai"; model: AIModel }
   | { type: "util"; name: "json-formatter" | "regex-tester" | "markdown-preview" }
   | { type: "flow"; name: "focus-timer" | "ambient-sound" | "build-notes" }
+  | { type: "editor" }
   | { type: "settings" };
 
-export type AppType = "terminal" | "ai" | "utils" | "flow" | "settings";
+export type AppType = "terminal" | "ai" | "utils" | "flow" | "editor" | "settings";
 
 export interface AppWindow {
   id: string;
