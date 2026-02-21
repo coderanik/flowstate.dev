@@ -46,6 +46,8 @@ function generateId(): string {
 const TERMINAL_USER = "anik";
 const TERMINAL_HOST = "Aniks-MacBook-Air-3";
 const TERMINAL_DIR = "flowstate.dev";
+const SHORT_PROMPT = `${TERMINAL_DIR} % `;
+const FULL_PROMPT = `(base) ${TERMINAL_USER}@${TERMINAL_HOST} ${TERMINAL_DIR} % `;
 
 const COMMANDS: Record<string, string> = {
   help: "Show available commands",
@@ -438,20 +440,25 @@ export function Terminal({
     if (inModelEnv) {
       return `(${activeModel}) % `;
     }
-    return `(base) ${TERMINAL_USER}@${TERMINAL_HOST} ${TERMINAL_DIR} % `;
+    // On small screens, the CSS hides the full prompt — use short version in the input line
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      return SHORT_PROMPT;
+    }
+    return FULL_PROMPT;
   };
 
   return (
     <div
-      className="h-full overflow-y-auto font-mono text-sm p-5 rounded-b-lg bg-gradient-to-b from-bg-primary to-bg-secondary/30"
+      className="h-full overflow-y-auto overflow-x-hidden font-mono text-xs sm:text-sm p-3 sm:p-5 rounded-b-lg bg-gradient-to-b from-bg-primary to-bg-secondary/30"
       onClick={() => inputRef.current?.focus()}
     >
       {/* Terminal lines */}
       {lines.map((line) => (
-        <div key={line.id} className="leading-7 py-0.5">
+        <div key={line.id} className="leading-6 sm:leading-7 py-0.5">
           {line.type === "input" ? (
-            <div>
-              <span className="text-text-primary select-none">(base) {TERMINAL_USER}@{TERMINAL_HOST} {TERMINAL_DIR} % </span>
+            <div className="break-words">
+              <span className="text-text-primary select-none hidden sm:inline">{FULL_PROMPT}</span>
+              <span className="text-text-primary select-none sm:hidden">{SHORT_PROMPT}</span>
               <span className="text-text-primary">{line.content}</span>
             </div>
           ) : line.type === "error" ? (
@@ -490,14 +497,15 @@ export function Terminal({
 
       {/* AI Messages */}
       {messages.map((message) => (
-        <div key={message.id} className="leading-7 py-0.5">
+        <div key={message.id} className="leading-6 sm:leading-7 py-0.5">
           {message.role === "user" ? (
-            <div>
-              <span className="text-text-primary select-none">(base) {TERMINAL_USER}@{TERMINAL_HOST} {TERMINAL_DIR} % </span>
+            <div className="break-words">
+              <span className="text-text-primary select-none hidden sm:inline">{FULL_PROMPT}</span>
+              <span className="text-text-primary select-none sm:hidden">{SHORT_PROMPT}</span>
               <span className="text-text-primary">{message.content}</span>
             </div>
           ) : message.role === "assistant" ? (
-            <pre className="whitespace-pre-wrap break-words text-text-primary leading-7">
+            <pre className="whitespace-pre-wrap break-words text-text-primary leading-6 sm:leading-7 overflow-x-hidden">
               {message.content}
             </pre>
           ) : (
@@ -507,11 +515,11 @@ export function Terminal({
       ))}
 
       {/* Input line - inline so cursor stays right after typed text */}
-      <div className="flex items-center leading-7 gap-0 mt-1">
-        <span className={`select-none whitespace-nowrap shrink-0 ${awaitingKeyFor ? "text-warning" : "text-text-primary"}`}>
+      <div className="flex items-center leading-6 sm:leading-7 gap-0 mt-1">
+        <span className={`select-none whitespace-nowrap shrink-0 text-xs sm:text-sm ${awaitingKeyFor ? "text-warning" : "text-text-primary"}`}>
           {getPrompt()}
         </span>
-        <span className="inline-flex items-center min-w-0">
+        <span className="inline-flex items-center min-w-0 flex-1">
           <textarea
             ref={inputRef}
             value={input}
@@ -520,9 +528,8 @@ export function Terminal({
             placeholder=""
             rows={1}
             disabled={isValidatingKey || isStreaming}
-            className="terminal-input bg-transparent resize-none text-text-primary placeholder:text-text-muted min-h-[24px] max-h-[200px] leading-7 min-w-[1ch] outline-none border-none focus:ring-0 focus:outline-none"
+            className="terminal-input bg-transparent resize-none text-text-primary placeholder:text-text-muted min-h-[24px] max-h-[200px] leading-6 sm:leading-7 min-w-[1ch] w-full outline-none border-none focus:ring-0 focus:outline-none text-xs sm:text-sm"
             style={{
-              width: `${Math.min(80, Math.max(1, (input?.length || 0) + 1))}ch`,
               ...(awaitingKeyFor ? { WebkitTextSecurity: "disc" } as React.CSSProperties : {}),
             }}
             spellCheck={false}

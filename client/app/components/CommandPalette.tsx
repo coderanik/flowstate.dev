@@ -72,7 +72,7 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-3 sm:px-0"
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -80,7 +80,7 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
 
       {/* Palette */}
       <div
-        className="relative w-full max-w-lg bg-bg-secondary border border-border rounded-xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg bg-bg-secondary border border-border rounded-xl shadow-2xl overflow-hidden mx-2 sm:mx-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Input */}

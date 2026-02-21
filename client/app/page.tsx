@@ -316,33 +316,32 @@ export default function Workspace() {
       className="h-screen flex flex-col overflow-hidden bg-bg-primary"
       data-mode={state.mode}
     >
-      {/* Menu Bar (top - macOS style) */}
-      <MenuBar
-        mode={state.mode}
-        activeModel={state.activeModel}
-        sessionStartTime={new Date(state.sessionStartTime)}
-        onCommandPalette={() => dispatch(toggleCommandPalette())}
-      />
+      {/* Menu Bar (top - macOS style) — hidden on mobile since windows are fullscreen */}
+      <div className="hidden sm:block">
+        <MenuBar
+          mode={state.mode}
+          activeModel={state.activeModel}
+          sessionStartTime={new Date(state.sessionStartTime)}
+          onCommandPalette={() => dispatch(toggleCommandPalette())}
+        />
+      </div>
 
       {/* Main content area */}
       <div className="flex-1 overflow-hidden relative desktop-bg">
-        {/* Desktop with widgets - always visible */}
-        <div className="absolute inset-0 p-8">
-          {/* Top row - Calendar (left) and Clock (right) */}
-          <div className="flex justify-between items-start">
-            {/* Calendar - top left */}
+        {/* Desktop with widgets - hidden on mobile/tablet */}
+        <div className="absolute inset-0 p-4 sm:p-6 lg:p-8">
+          {/* Top row - Calendar (left) and Clock (right); hidden on mobile & tablet */}
+          <div className="hidden lg:flex justify-between items-start">
             <Calendar />
-            
-            {/* Clock - top right */}
             <Clock />
           </div>
 
           {/* Center welcome text - only show when no windows */}
           {state.windows.filter((w) => !w.isMinimized).length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center">
-                <h1 className="text-4xl font-light text-text-primary mb-2">flowstate.dev</h1>
-                <p className="text-text-muted">Click an app in the dock to begin</p>
+              <div className="text-center px-4">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-light text-text-primary mb-2">flowstate.dev</h1>
+                <p className="text-text-muted text-sm sm:text-base">Click an app in the dock to begin</p>
               </div>
             </div>
           )}
@@ -371,13 +370,15 @@ export default function Workspace() {
         ))}
       </div>
 
-      {/* Bottom bar: Spotify (left) + Dock (center) */}
-      <div className="flex items-center justify-center gap-4 px-8 pb-2">
-        <div className="flex-1 flex justify-start">
+      {/* Bottom bar: Spotify (left) + Dock (center); Spotify hidden on mobile & tablet */}
+      <div className="flex items-center justify-center gap-2 sm:gap-4 px-2 sm:px-6 lg:px-8 pb-1 sm:pb-2">
+        {/* Left spacer: SpotifyCard on desktop, empty flex-1 on mobile/tablet to keep dock centered */}
+        <div className="flex-1 lg:hidden" />
+        <div className="hidden lg:flex flex-1 justify-start">
           <SpotifyCard />
         </div>
         <Dock
-          className="mt-19"
+          className="mb-34 sm:mt-10 lg:mt-19 "
           items={[
             {
               icon: <VscTerminal size={18} />,

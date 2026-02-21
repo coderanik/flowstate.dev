@@ -129,6 +129,8 @@ body {
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.6;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  overscroll-behavior: none; /* Prevent rubber-band scroll */
 }
 
 /* Subtle background grain */
@@ -337,4 +339,40 @@ body::before {
 }
 .settings-nav::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* ===== RESPONSIVE / MOBILE ===== */
+
+/* Safe area padding for notched devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile: reduce body font size */
+@media (max-width: 640px) {
+  body {
+    font-size: 12px;
+  }
+
+  /* Wider touch-friendly scrollbars */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  /* Prevent any horizontal overflow */
+  .terminal-input {
+    max-width: 100%;
+  }
+}
+
+/* Tablet: slight adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 }
