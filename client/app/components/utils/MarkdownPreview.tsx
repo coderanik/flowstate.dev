@@ -131,27 +131,26 @@ export function MarkdownPreview() {
   );
 
   return (
-    <div className="flex h-full">
-      <div className="flex-1 flex flex-col min-w-0 border-r border-border">
-        <label className="px-3 py-2 text-text-muted text-xs font-mono border-b border-border bg-bg-tertiary/50">
+    <div className="flex flex-col sm:flex-row min-h-full sm:h-full">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 border-b sm:border-b-0 sm:border-r border-border">
+        <label className="px-2 sm:px-3 py-1.5 sm:py-2 text-text-secondary text-xs font-mono font-semibold border-b border-border bg-bg-tertiary/50">
           Markdown
         </label>
         <textarea
           value={source}
           onChange={(e) => setSource(e.target.value)}
-          className="flex-1 w-full resize-none bg-bg-primary p-4 font-mono text-sm text-text-primary placeholder:text-text-muted outline-none"
+          className="flex-1 w-full min-h-[120px] resize-none bg-bg-primary p-3 sm:p-4 font-mono text-xs sm:text-sm text-text-primary placeholder:text-text-muted outline-none"
           placeholder="# Your markdown..."
           spellCheck={false}
         />
       </div>
-      <div className="flex-1 flex flex-col min-w-0 overflow-auto bg-bg-primary">
-        <label className="px-3 py-2 text-text-muted text-xs font-mono border-b border-border bg-bg-tertiary/50">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-auto bg-bg-primary">
+        <label className="px-2 sm:px-3 py-1.5 sm:py-2 text-text-secondary text-xs font-mono font-semibold border-b border-border bg-bg-tertiary/50">
           Preview
         </label>
         <div
-          className="flex-1 p-4 markdown-preview"
+          className="flex-1 p-3 sm:p-4 markdown-preview"
           style={{
-            // Allow HTML from rehype-raw to render like GitHub README
             wordBreak: "break-word",
           }}
         >

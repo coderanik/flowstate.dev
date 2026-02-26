@@ -42,52 +42,52 @@ export function RegexTester() {
   const parts = highlighted.split("\u0000");
 
   return (
-    <div className="flex flex-col h-full p-4 gap-3">
-      <div className="flex gap-3 items-center shrink-0 flex-wrap">
+    <div className="flex flex-col min-h-full sm:h-full p-3 sm:p-4 gap-2 sm:gap-3">
+      <div className="flex gap-2 sm:gap-3 items-center shrink-0 flex-wrap">
         <div className="flex items-center gap-2">
-          <label className="text-text-muted text-xs font-mono">Regex</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold">Regex</label>
           <input
             type="text"
             value={regex}
             onChange={(e) => setRegex(e.target.value)}
             placeholder="[a-z]+"
-            className="flex-1 min-w-[120px] rounded-md bg-bg-primary border border-border px-3 py-1.5 font-mono text-sm text-text-primary placeholder:text-text-muted outline-none"
+            className="flex-1 min-w-[80px] sm:min-w-[120px] rounded-md bg-bg-primary border border-border px-2 sm:px-3 py-1.5 font-mono text-xs sm:text-sm text-text-primary placeholder:text-text-muted outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-text-muted text-xs font-mono">Flags</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold">Flags</label>
           <input
             type="text"
             value={flags}
             onChange={(e) => setFlags(e.target.value)}
             placeholder="g"
-            className="w-16 rounded-md bg-bg-primary border border-border px-2 py-1.5 font-mono text-sm text-text-primary outline-none"
+            className="w-12 sm:w-16 rounded-md bg-bg-primary border border-border px-2 py-1.5 font-mono text-xs sm:text-sm text-text-primary outline-none"
           />
         </div>
         <button
           type="button"
           onClick={runTest}
-          className="px-3 py-1.5 rounded-md bg-bg-tertiary text-text-primary text-sm hover:bg-bg-hover"
+          className="px-3 py-1.5 rounded-md bg-bg-tertiary text-text-primary text-xs sm:text-sm hover:bg-bg-hover"
         >
           Test
         </button>
       </div>
       <div className="flex-1 flex flex-col min-h-0 gap-2">
-        <label className="text-text-muted text-xs font-mono">Test string</label>
+        <label className="text-text-secondary text-xs font-mono font-semibold">Test string</label>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onBlur={runTest}
           placeholder="Enter text to test against the regex"
-          className="flex-1 min-h-[80px] w-full resize-none rounded-md bg-bg-primary border border-border p-3 font-mono text-sm text-text-primary placeholder:text-text-muted outline-none"
+          className="flex-1 min-h-[60px] sm:min-h-[80px] w-full resize-none rounded-md bg-bg-primary border border-border p-2 sm:p-3 font-mono text-xs sm:text-sm text-text-primary placeholder:text-text-muted outline-none"
         />
       </div>
       <div className="shrink-0">
         {matchError && (
-          <p className="text-error text-sm font-mono mb-2">{matchError}</p>
+          <p className="text-error text-xs sm:text-sm font-mono mb-2">{matchError}</p>
         )}
-        <label className="text-text-muted text-xs font-mono block mb-1">Matches</label>
-        <div className="rounded-md bg-bg-primary border border-border p-3 font-mono text-sm min-h-[60px]">
+        <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">Matches</label>
+        <div className="rounded-md bg-bg-primary border border-border p-2 sm:p-3 font-mono text-xs sm:text-sm min-h-[40px] sm:min-h-[60px]">
           {parts.length > 1 ? (
             <p className="text-text-primary break-words">
               {parts.map((part, i) =>

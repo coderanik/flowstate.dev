@@ -29,13 +29,13 @@ export function Utils({ initialTool }: { initialTool: Tool["type"] extends "util
 
   return (
     <div className="flex flex-col h-full bg-bg-secondary">
-      <div className="flex gap-1 px-3 py-2 border-b border-border bg-bg-tertiary shrink-0">
+      <div className="flex gap-1 px-2 sm:px-3 py-1.5 sm:py-2 border-b border-border bg-bg-tertiary shrink-0 overflow-x-auto scrollbar-none">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
             onClick={() => setActive(id)}
-            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
               active === id
                 ? "bg-bg-primary text-text-primary"
                 : "text-text-muted hover:text-text-secondary hover:bg-bg-hover"

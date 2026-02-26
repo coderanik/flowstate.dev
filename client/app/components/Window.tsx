@@ -260,7 +260,7 @@ export function Window({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">{children}</div>
+      <div className={`flex-1 ${isFullScreen && isMobile ? "overflow-auto" : "overflow-hidden"}`}>{children}</div>
 
       {/* Resize handle (desktop only, non-maximized) */}
       {!isFullScreen && !isMobile && (
