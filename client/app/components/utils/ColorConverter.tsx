@@ -159,7 +159,8 @@ function hue2rgb(p: number, q: number, t: number): number {
   return p;
 }
 
-const PICKER_SIZE = 220;
+const PICKER_SIZE_SM = 160;
+const PICKER_SIZE_LG = 220;
 const HUE_HEIGHT = 12;
 
 export function ColorConverter() {
@@ -169,6 +170,14 @@ export function ColorConverter() {
   const svRef = useRef<HTMLDivElement>(null);
   const hueRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<"sv" | "hue" | null>(null);
+  const [pickerSize, setPickerSize] = useState(PICKER_SIZE_LG);
+
+  useEffect(() => {
+    const updateSize = () => setPickerSize(window.innerWidth < 640 ? PICKER_SIZE_SM : PICKER_SIZE_LG);
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   const updateFromRgb = useCallback((r: number, g: number, b: number) => {
     const rr = Math.round(Math.max(0, Math.min(255, r)));
@@ -221,18 +230,28 @@ export function ColorConverter() {
       if (dragging === "sv") handleSvMove(e.clientX, e.clientY);
       else handleHueMove(e.clientX);
     };
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const t = e.touches[0];
+      if (dragging === "sv") handleSvMove(t.clientX, t.clientY);
+      else handleHueMove(t.clientX);
+    };
     const onUp = () => setDragging(null);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onUp);
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onUp);
     };
   }, [dragging, handleSvMove, handleHueMove]);
 
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
-  const hueColor = rgbToHex(...Object.values(hsvToRgb(hsv.h, 100, 100)));
+  const hueColor = rgbToHex(...(Object.values(hsvToRgb(hsv.h, 100, 100)) as [number, number, number]));
 
   const validRgb = hexToRgb(hex);
   const effectiveHex = validRgb ? hex : rgbToHex(rgb.r, rgb.g, rgb.b);
@@ -247,9 +266,9 @@ export function ColorConverter() {
   const copyHex = () => navigator.clipboard.writeText(effectiveHex);
 
   return (
-    <div className="flex flex-col h-full p-4 gap-4 text-text-primary">
+    <div className="flex flex-col min-h-full sm:h-full p-3 sm:p-4 gap-3 sm:gap-4 text-text-primary overflow-auto">
       <div className="flex items-center justify-between shrink-0">
-        <h2 className="text-base font-semibold text-text-primary">Colour picker</h2>
+        <h2 className="text-sm sm:text-base font-semibold text-text-primary">Colour picker</h2>
         <button
           type="button"
           onClick={copyHex}
@@ -265,16 +284,16 @@ export function ColorConverter() {
         </button>
       </div>
 
-      <div className="flex gap-4 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 shrink-0 items-center">
         <div
           className="rounded-lg border border-border shrink-0 overflow-hidden"
-          style={{ width: PICKER_SIZE, height: PICKER_SIZE, backgroundColor: effectiveHex }}
+          style={{ width: pickerSize, height: pickerSize, backgroundColor: effectiveHex }}
           aria-hidden
         />
-        <div className="relative shrink-0" style={{ width: PICKER_SIZE, height: PICKER_SIZE }}>
+        <div className="relative shrink-0" style={{ width: pickerSize, height: pickerSize }}>
           <div
             ref={svRef}
-            className="absolute inset-0 rounded-lg border border-border cursor-crosshair overflow-hidden"
+            className="absolute inset-0 rounded-lg border border-border cursor-crosshair overflow-hidden touch-none"
             style={{
               background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hueColor})`,
             }}
@@ -283,24 +302,30 @@ export function ColorConverter() {
               setDragging("sv");
               handleSvMove(e.clientX, e.clientY);
             }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              setDragging("sv");
+              const t = e.touches[0];
+              handleSvMove(t.clientX, t.clientY);
+            }}
           />
           <div
-            className="absolute w-4 h-4 rounded-full border-2 border-white shadow-md pointer-events-none"
+            className="absolute w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-white shadow-md pointer-events-none"
             style={{
-              left: (hsv.s / 100) * PICKER_SIZE - 8,
-              top: (1 - hsv.v / 100) * PICKER_SIZE - 8,
+              left: (hsv.s / 100) * pickerSize - (pickerSize < PICKER_SIZE_LG ? 7 : 8),
+              top: (1 - hsv.v / 100) * pickerSize - (pickerSize < PICKER_SIZE_LG ? 7 : 8),
             }}
           />
         </div>
       </div>
 
-      <div className="shrink-0" style={{ width: PICKER_SIZE }}>
-        <label className="text-text-muted text-xs font-mono block mb-1.5">Hue</label>
+      <div className="shrink-0" style={{ width: pickerSize, margin: '0 auto' }}>
+        <label className="text-text-secondary text-xs font-mono font-semibold block mb-1.5">Hue</label>
         <div
           ref={hueRef}
-          className="relative h-3 rounded-full border border-border cursor-pointer overflow-hidden"
+          className="relative h-3 rounded-full border border-border cursor-pointer overflow-hidden touch-none"
           style={{
-            width: PICKER_SIZE,
+            width: pickerSize,
             background: "linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)",
           }}
           onMouseDown={(e) => {
@@ -308,26 +333,32 @@ export function ColorConverter() {
             setDragging("hue");
             handleHueMove(e.clientX);
           }}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            setDragging("hue");
+            const t = e.touches[0];
+            handleHueMove(t.clientX);
+          }}
         >
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white shadow pointer-events-none"
+            className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-white shadow pointer-events-none"
             style={{
-              left: (hsv.h / 360) * PICKER_SIZE - 8,
+              left: (hsv.h / 360) * pickerSize - (pickerSize < PICKER_SIZE_LG ? 7 : 8),
               backgroundColor: hueColor,
             }}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 shrink-0">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-3 sm:gap-y-4 shrink-0">
         <div>
-          <label className="text-text-muted text-xs font-mono block mb-1">HEX</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">HEX</label>
           <div className="flex items-center gap-2">
             <input
               type="text"
               value={hex}
               onChange={onHexChange}
-              className="flex-1 min-w-0 rounded-md bg-bg-primary border border-border px-2 py-1.5 font-mono text-sm text-text-primary outline-none"
+              className="flex-1 min-w-0 rounded-md bg-bg-primary border border-border px-2 py-1.5 font-mono text-xs sm:text-sm text-text-primary outline-none"
             />
             <button
               type="button"
@@ -344,25 +375,25 @@ export function ColorConverter() {
           </div>
         </div>
         <div>
-          <label className="text-text-muted text-xs font-mono block mb-1">RGB</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">RGB</label>
           <p className="font-mono text-sm text-text-secondary">
             {rgb.r}, {rgb.g}, {rgb.b}
           </p>
         </div>
         <div>
-          <label className="text-text-muted text-xs font-mono block mb-1">CMYK</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">CMYK</label>
           <p className="font-mono text-sm text-text-secondary">
             {Math.round(cmyk.c)}%, {Math.round(cmyk.m)}%, {Math.round(cmyk.y)}%, {Math.round(cmyk.k)}%
           </p>
         </div>
         <div>
-          <label className="text-text-muted text-xs font-mono block mb-1">HSV</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">HSV</label>
           <p className="font-mono text-sm text-text-secondary">
             {Math.round(hsv.h)}°, {Math.round(hsv.s)}%, {Math.round(hsv.v)}%
           </p>
         </div>
         <div>
-          <label className="text-text-muted text-xs font-mono block mb-1">HSL</label>
+          <label className="text-text-secondary text-xs font-mono font-semibold block mb-1">HSL</label>
           <p className="font-mono text-sm text-text-secondary">
             {Math.round(hsl.h)}°, {Math.round(hsl.s)}%, {Math.round(hsl.l)}%
           </p>
