@@ -100,7 +100,7 @@ export function Clock() {
   const timeFormat = useAppSelector((s) => s.settings.timeFormat);
 
   useEffect(() => {
-    setTime(new Date());
+    requestAnimationFrame(() => setTime(new Date()));
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);

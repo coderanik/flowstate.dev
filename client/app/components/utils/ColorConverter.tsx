@@ -122,7 +122,7 @@ function hsvToRgb(h: number, s: number, v: number): { r: number; g: number; b: n
 }
 
 function rgbToCmyk(r: number, g: number, b: number): { c: number; m: number; y: number; k: number } {
-  let rn = r / 255,
+  const rn = r / 255,
     gn = g / 255,
     bn = b / 255;
   const k = 1 - Math.max(rn, gn, bn);

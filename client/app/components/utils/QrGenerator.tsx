@@ -25,8 +25,10 @@ export function QrGenerator() {
       const t = setTimeout(generate, 400);
       return () => clearTimeout(t);
     } else {
-      setDataUrl(null);
-      setError(null);
+      setTimeout(() => {
+        setDataUrl(null);
+        setError(null);
+      }, 0);
     }
   }, [input, generate]);
 

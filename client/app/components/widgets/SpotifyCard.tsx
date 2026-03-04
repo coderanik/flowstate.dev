@@ -80,7 +80,7 @@ export function SpotifyCard() {
     if (!connected) return;
 
     // Fetch immediately
-    fetchNowPlaying();
+    setTimeout(() => fetchNowPlaying(), 0);
 
     // Poll every 5s
     pollRef.current = setInterval(fetchNowPlaying, 5000);
