@@ -36,7 +36,7 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
   // Keep selection in bounds
   useEffect(() => {
     if (selectedIndex >= filteredCommands.length) {
-      setSelectedIndex(Math.max(0, filteredCommands.length - 1));
+      setTimeout(() => setSelectedIndex(Math.max(0, filteredCommands.length - 1)), 0);
     }
   }, [filteredCommands.length, selectedIndex]);
 

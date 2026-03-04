@@ -35,7 +35,7 @@ interface TerminalLine {
   /** Optional variant for output styling (help/models) */
   variant?: OutputVariant;
   /** Optional structured data for command rows */
-  meta?: { command?: string; desc?: string } | { indicator?: string; name?: string; id?: string; keyStatus?: string };
+  meta?: { command?: string; desc?: string; indicator?: string; name?: string; id?: string; keyStatus?: string };
 }
 
 function generateId(): string {
@@ -121,7 +121,7 @@ export function Terminal({
       const welcomeLines: TerminalLine[] = [
         { id: generateId(), type: "system", content: `Last login: ${formatLoginDate(sessionStartTime)} on ttys011` },
       ];
-      setLines(welcomeLines);
+      setTimeout(() => setLines(welcomeLines), 0);
     }
   }, []);
 
@@ -535,7 +535,6 @@ export function Terminal({
             spellCheck={false}
             autoComplete="off"
           />
-          <span className="text-text-primary cursor-blink select-none shrink-0">▋</span>
         </span>
       </div>
 

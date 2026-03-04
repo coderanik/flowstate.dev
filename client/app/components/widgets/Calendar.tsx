@@ -12,7 +12,7 @@ export function Calendar() {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
 
   useEffect(() => {
-    setCurrentDate(new Date());
+    requestAnimationFrame(() => setCurrentDate(new Date()));
   }, []);
 
   if (!currentDate) return null;
